@@ -6,23 +6,34 @@ module MemoRef
   )
 where
 
-import           Control.Monad                  ( join )
+import           Control.Concurrent.STM
+import           Control.Monad
 import           Control.Monad.Fix              ( mfix )
-import           Control.Monad.ST
-import           Data.STRef
 
-data MemoRef s a = PureValue a | MemoRef (STRef s (ST s a))
+data MemoRef a = PureValue a | MemoRef (TVar (IO a))
 
-pureRef :: a -> MemoRef s a
+pureRef :: a -> MemoRef a
 pureRef = PureValue
 
-newMemoRef :: ST s a -> ST s (MemoRef s a)
-newMemoRef act = fmap MemoRef $ mfix $ \r -> newSTRef $ do
-  result <- act
-  writeSTRef r (return result)
-  return result
+newMemoRef :: IO a -> IO (MemoRef a)
+newMemoRef act = fmap MemoRef $ do
+  begunEvaluation <- newTVarIO False
+  resultBox       <- newEmptyTMVarIO
+  mfix $ \r -> newTVarIO $ do
+    hasBegun <- atomically $ do
+      res <- readTVar begunEvaluation
+      unless res $ writeTVar begunEvaluation True
+      return res
+    if hasBegun
+      then atomically $ readTMVar resultBox
+      else do
+        result <- act
+        atomically $ do
+          putTMVar resultBox result
+          writeTVar r (return result)
+        return result
 
-readMemoRef :: MemoRef s a -> ST s a
+readMemoRef :: MemoRef a -> IO a
 readMemoRef = \case
   PureValue x      -> return x
-  MemoRef   actRef -> join $ readSTRef actRef
+  MemoRef   actRef -> join $ readTVarIO actRef

@@ -21,12 +21,17 @@ description:         Please see the README on GitHub at <https://github.com/dspi
 
 dependencies:
 - base >= 4.7 && < 5
+- constraints
+- mtl
+- stm
 
 default-extensions:
+- ExistentialQuantification
 - LambdaCase
 - RankNTypes
 - ScopedTypeVariables
 - TupleSections
+- TypeFamilies
 
 ghc-options:
 - -Wall

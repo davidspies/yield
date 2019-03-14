@@ -7,7 +7,12 @@ module Lib
 where
 
 import           Control.Monad
+import           Control.Monad.Reader           ( ReaderT(..)
+                                                , lift
+                                                )
+import qualified Control.Monad.Reader          as Reader
 import           Control.Monad.ST
+import           Data.Constraint                ( Dict(..) )
 import           System.IO.Unsafe               ( unsafePerformIO )
 
 import           MemoRef
@@ -15,12 +20,12 @@ import           MemoRef
 (<&>) :: Functor f => f a -> (a -> b) -> f b
 (<&>) = flip (<$>)
 
-newtype Yielder s a b = Yielder (MemoRef s (Either (a, Yielder s a b) b))
+newtype Yielder s a b = Yielder (MemoRef (Either (a, Yielder s a b) b))
 
-pureY :: ST s b -> ST s (Yielder s a b)
-pureY v = Yielder <$> newMemoRef (Right <$> v)
+pureY :: b -> Yielder s a b
+pureY v = Yielder $ pureRef (Right v)
 
-bindY :: Yielder s a b -> (b -> ST s (Yielder s a c)) -> ST s (Yielder s a c)
+bindY :: Yielder s a b -> (b -> IO (Yielder s a c)) -> IO (Yielder s a c)
 bindY (Yielder actRef) fn =
   fmap Yielder . newMemoRef $ readMemoRef actRef >>= \case
     Left  (nextV, nextY) -> Left . (nextV, ) <$> bindY nextY fn
@@ -28,27 +33,32 @@ bindY (Yielder actRef) fn =
       Yielder resRef <- fn val
       readMemoRef resRef
 
-newtype YieldST s a b = YieldST {unYieldIOM :: ST s (Yielder s a b)}
+newtype YieldST s a b = YieldST {unYieldIOM :: ReaderT (Dict (s ~ RealWorld)) IO (Yielder s a b)}
 
 instance Functor (YieldST s a) where
   fmap = liftM
 instance Applicative (YieldST s a) where
-  pure  = YieldST . pureY . return
+  pure  = YieldST . pure . pureY
   (<*>) = ap
 instance Monad (YieldST s a) where
-  (>>=) (YieldST x) fn = YieldST $ x >>= (`bindY` (unYieldIOM . fn))
+  (>>=) (YieldST mkX) fn = YieldST $ do
+    x    <- mkX
+    dict <- Reader.ask
+    lift $ x `bindY` (\v -> runReaderT (unYieldIOM $ fn v) dict)
 
 yield :: a -> YieldST s a ()
-yield x = YieldST $ Yielder <$> newMemoRef
+yield x = YieldST $ lift $ Yielder <$> newMemoRef
   (pure $ Left (x, Yielder $ pureRef $ Right ()))
 
 runYieldST :: (forall s . YieldST s a b) -> [a]
-runYieldST (YieldST act) = unsafePerformIO $ stToIO $ go =<< act
+runYieldST (YieldST act) = unsafePerformIO $ go =<< runReaderT act Dict
  where
-  go :: Yielder RealWorld a b -> ST RealWorld [a]
+  go :: Yielder RealWorld a b -> IO [a]
   go (Yielder r) = readMemoRef r <&> \case
-    Left  (h, t) -> h : unsafePerformIO (stToIO $ go t)
+    Left  (h, t) -> h : unsafePerformIO (go t)
     Right _      -> []
 
 inST :: ST s b -> YieldST s a b
-inST act = YieldST $ Yielder <$> newMemoRef (Right <$> act)
+inST act = YieldST $ do
+  Dict <- Reader.ask
+  lift $ Yielder <$> newMemoRef (stToIO $ Right <$> act)
