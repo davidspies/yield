@@ -1,7 +1,7 @@
-module MemoRef
+module Data.MemoRef
   ( MemoRef
   , newMemoRef
-  , pureRef
+  , pureMemoRef
   , readMemoRef
   )
 where
@@ -12,8 +12,8 @@ import           Control.Monad.Fix              ( mfix )
 
 data MemoRef a = PureValue a | MemoRef (TVar (IO a))
 
-pureRef :: a -> MemoRef a
-pureRef = PureValue
+pureMemoRef :: a -> MemoRef a
+pureMemoRef = PureValue
 
 newMemoRef :: IO a -> IO (MemoRef a)
 newMemoRef act = fmap MemoRef $ do
