@@ -23,5 +23,5 @@ deriving via (Transformed (ExceptT e) m) instance MonadYield a m
   => MonadYield a (ExceptT e m)
 deriving via (Transformed (StateT s) m) instance MonadYield a m
   => MonadYield a (StateT s m)
-deriving via (Transformed (ContT c) m) instance MonadYield a m
-  => MonadYield a (ContT c m)
+deriving via (Transformed (ContT r) m) instance MonadYield a m
+  => MonadYield a (ContT r m)
