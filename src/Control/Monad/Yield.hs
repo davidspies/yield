@@ -7,6 +7,7 @@ where
 
 import           DSpies.Prelude
 
+import           Control.Monad.Base             ( MonadBase(..) )
 import           Control.Monad.Yield.Class     as X
 
 data Yield a b = Continue (a, Yield a b) | Final b
@@ -22,6 +23,9 @@ instance Monad (Yield a) where
 
 instance MonadYield a (Yield a) where
   yield x = Continue (x, Final ())
+
+instance MonadBase (Yield a) (Yield a) where
+  liftBase = id
 
 runYield :: Yield a b -> [a]
 runYield = \case
