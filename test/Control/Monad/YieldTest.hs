@@ -20,4 +20,4 @@ countTo :: Int -> Yield Int ()
 countTo n = void $ (`runStateT` 0) $ replicateM_ n $ do
   State.modify (+ 1)
   i <- State.get
-  lift $ yield i
+  yield i
