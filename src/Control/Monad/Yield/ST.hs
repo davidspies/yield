@@ -8,6 +8,7 @@ where
 
 import           DSpies.Prelude
 
+import           Control.Monad.Base             ( MonadBase(..) )
 import qualified Control.Monad.Reader          as Reader
 import           Control.Monad.ST
 import           Data.Constraint                ( Dict(..) )
@@ -29,7 +30,8 @@ bindY (Yielder actRef) fn =
       Yielder resRef <- fn val
       readMemoRef resRef
 
-newtype YieldST s a b = YieldST {unYieldIOM :: ReaderT (Dict (s ~ RealWorld)) IO (Yielder s a b)}
+newtype YieldST s a b
+  = YieldST {unYieldIOM :: ReaderT (Dict (s ~ RealWorld)) IO (Yielder s a b)}
 
 instance Functor (YieldST s a) where
   fmap = liftM
@@ -53,6 +55,9 @@ runYieldST (YieldST act) = unsafePerformIO $ go =<< runReaderT act Dict
   go (Yielder r) = readMemoRef r <&> \case
     Left  (h, t) -> h : unsafePerformIO (go t)
     Right _      -> []
+
+instance MonadBase (ST s) (YieldST s a) where
+  liftBase = inST
 
 inST :: ST s b -> YieldST s a b
 inST act = YieldST $ do

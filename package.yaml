@@ -26,6 +26,7 @@ dependencies:
 - constraints
 - mtl
 - stm
+- transformers-base
 
 ghc-options:
 - -Werror
