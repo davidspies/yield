@@ -1,3 +1,3 @@
-# Changelog for yieldst
+# Changelog for yield
 
 ## Unreleased changes

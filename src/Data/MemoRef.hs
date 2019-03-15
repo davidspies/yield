@@ -6,8 +6,9 @@ module Data.MemoRef
   )
 where
 
+import           DSpies.Prelude
+
 import           Control.Concurrent.STM
-import           Control.Monad
 import           Control.Monad.Fix              ( mfix )
 
 newtype MemoRef a = MemoRef (TVar (IO a))

@@ -6,10 +6,8 @@ module Control.Monad.Yield.ST
   )
 where
 
-import           Control.Monad
-import           Control.Monad.Reader           ( ReaderT(..)
-                                                , lift
-                                                )
+import           DSpies.Prelude
+
 import qualified Control.Monad.Reader          as Reader
 import           Control.Monad.ST
 import           Data.Constraint                ( Dict(..) )
@@ -17,9 +15,6 @@ import           System.IO.Unsafe               ( unsafePerformIO )
 
 import           Control.Monad.Yield.Class     as X
 import           Data.MemoRef
-
-(<&>) :: Functor f => f a -> (a -> b) -> f b
-(<&>) = flip (<$>)
 
 newtype Yielder s a b = Yielder (MemoRef (Either (a, Yielder s a b) b))
 

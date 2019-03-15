@@ -1,9 +1,9 @@
-name:                yieldst
+name:                yield
 version:             0.1.0.0
-github:              "dspies-leapyear/yieldst"
+github:              "davidspies/yield"
 license:             BSD3
 author:              "David Spies"
-maintainer:          "david@leapyear.io"
+maintainer:          "dnspies@gmail.com"
 copyright:           "2019 David Spies"
 
 extra-source-files:
@@ -12,46 +12,78 @@ extra-source-files:
 
 # Metadata used when publishing your package
 # synopsis:            Short description of your package
-# category:            Web
+# category: Web
+
 
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/dspies-leapyear/yieldst#readme>
+description:         Please see the README on GitHub at <https://github.com/davidspies/yield#readme>
 
 dependencies:
 - base >= 4.7 && < 5
+- dspies-prelude
 - constraints
 - mtl
 - stm
 
+ghc-options:
+- -Werror
+- -Wall
+
 default-extensions:
+- BangPatterns
+- ConstraintKinds
+- DataKinds
+- DeriveFoldable
 - DeriveFunctor
+- DeriveGeneric
+- DeriveLift
+- DeriveTraversable
+- DerivingStrategies
+- DerivingVia
+- EmptyCase
 - ExistentialQuantification
+- FlexibleContexts
 - FlexibleInstances
 - FunctionalDependencies
+- GADTs
+- GeneralizedNewtypeDeriving
+- InstanceSigs
+- KindSignatures
 - LambdaCase
 - MultiParamTypeClasses
+- MultiWayIf
+- NamedFieldPuns
+- NoImplicitPrelude
+- OverloadedStrings
+- QuantifiedConstraints
 - RankNTypes
+- RecordWildCards
 - ScopedTypeVariables
+- StandaloneDeriving
 - TupleSections
+- TypeApplications
+- TypeFamilyDependencies
 - TypeFamilies
-
-ghc-options:
-- -Wall
-- -Werror
+- TypeOperators
+- TypeSynonymInstances
+- ViewPatterns
 
 library:
   source-dirs: src
 
 tests:
-  yieldst-test:
-    main:                Spec.hs
+  yield-test:
+    main:                Tasty.hs
     source-dirs:         test
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
+    - yield
     - hspec
-    - yieldst
+    - tasty
+    - tasty-discover
+    - tasty-hspec

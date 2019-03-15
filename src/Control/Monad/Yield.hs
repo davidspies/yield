@@ -5,7 +5,7 @@ module Control.Monad.Yield
   )
 where
 
-import           Control.Monad                  ( ap )
+import           DSpies.Prelude
 
 import           Control.Monad.Yield.Class     as X
 
