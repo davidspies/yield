@@ -10,10 +10,11 @@ import           Control.Concurrent.STM
 import           Control.Monad
 import           Control.Monad.Fix              ( mfix )
 
-data MemoRef a = PureValue a | MemoRef (TVar (IO a))
+newtype MemoRef a = MemoRef (TVar (IO a))
 
-pureMemoRef :: a -> MemoRef a
-pureMemoRef = PureValue
+-- | Equivalent to @ newMemoRef . return @
+pureMemoRef :: a -> IO (MemoRef a)
+pureMemoRef = fmap MemoRef . newTVarIO . return
 
 newMemoRef :: IO a -> IO (MemoRef a)
 newMemoRef act = fmap MemoRef $ do
@@ -21,9 +22,9 @@ newMemoRef act = fmap MemoRef $ do
   resultBox       <- newEmptyTMVarIO
   mfix $ \r -> newTVarIO $ do
     hasBegun <- atomically $ do
-      res <- readTVar begunEvaluation
-      unless res $ writeTVar begunEvaluation True
-      return res
+      hasBegun <- readTVar begunEvaluation
+      unless hasBegun $ writeTVar begunEvaluation True
+      return hasBegun
     if hasBegun
       then atomically $ readTMVar resultBox
       else do
@@ -34,6 +35,4 @@ newMemoRef act = fmap MemoRef $ do
         return result
 
 readMemoRef :: MemoRef a -> IO a
-readMemoRef = \case
-  PureValue x      -> return x
-  MemoRef   actRef -> join $ readTVarIO actRef
+readMemoRef (MemoRef actRef) = join $ readTVarIO actRef

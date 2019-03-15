@@ -26,8 +26,12 @@ dependencies:
 - stm
 
 default-extensions:
+- DeriveFunctor
 - ExistentialQuantification
+- FlexibleInstances
+- FunctionalDependencies
 - LambdaCase
+- MultiParamTypeClasses
 - RankNTypes
 - ScopedTypeVariables
 - TupleSections

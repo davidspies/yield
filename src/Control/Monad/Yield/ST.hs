@@ -1,8 +1,8 @@
-module Control.Monad.YieldST
+module Control.Monad.Yield.ST
   ( YieldST
   , inST
   , runYieldST
-  , yield
+  , module X
   )
 where
 
@@ -15,6 +15,7 @@ import           Control.Monad.ST
 import           Data.Constraint                ( Dict(..) )
 import           System.IO.Unsafe               ( unsafePerformIO )
 
+import           Control.Monad.Yield.Class     as X
 import           Data.MemoRef
 
 (<&>) :: Functor f => f a -> (a -> b) -> f b
@@ -22,8 +23,8 @@ import           Data.MemoRef
 
 newtype Yielder s a b = Yielder (MemoRef (Either (a, Yielder s a b) b))
 
-pureY :: b -> Yielder s a b
-pureY v = Yielder $ pureMemoRef (Right v)
+pureY :: b -> IO (Yielder s a b)
+pureY v = Yielder <$> pureMemoRef (Right v)
 
 bindY :: Yielder s a b -> (b -> IO (Yielder s a c)) -> IO (Yielder s a c)
 bindY (Yielder actRef) fn =
@@ -38,7 +39,7 @@ newtype YieldST s a b = YieldST {unYieldIOM :: ReaderT (Dict (s ~ RealWorld)) IO
 instance Functor (YieldST s a) where
   fmap = liftM
 instance Applicative (YieldST s a) where
-  pure  = YieldST . pure . pureY
+  pure  = YieldST . lift . pureY
   (<*>) = ap
 instance Monad (YieldST s a) where
   (>>=) (YieldST mkX) fn = YieldST $ do
@@ -46,9 +47,9 @@ instance Monad (YieldST s a) where
     dict <- Reader.ask
     lift $ x `bindY` (\v -> runReaderT (unYieldIOM $ fn v) dict)
 
-yield :: a -> YieldST s a ()
-yield x = YieldST $ lift $ Yielder <$> newMemoRef
-  (pure $ Left (x, Yielder $ pureMemoRef $ Right ()))
+instance MonadYield a (YieldST s a) where
+  yield x = YieldST $ lift $ Yielder <$> newMemoRef
+    (Left . (x, ) . Yielder <$> pureMemoRef (Right ()))
 
 runYieldST :: (forall s . YieldST s a b) -> [a]
 runYieldST (YieldST act) = unsafePerformIO $ go =<< runReaderT act Dict
