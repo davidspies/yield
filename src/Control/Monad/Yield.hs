@@ -1,13 +1,13 @@
 module Control.Monad.Yield
   ( Yield
   , runYield
-  , module X
+  , yield
   )
 where
 
 import           DSpies.Prelude
 
-import           Control.Monad.Yield.Class     as X
+import           Control.Monad.Yield.Class
 
 data Yield a b = Continue (a, Yield a b) | Final b
   deriving (Functor)

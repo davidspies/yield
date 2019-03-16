@@ -18,9 +18,9 @@ spec_yieldst = describe "YieldST" $ do
 
 countToST :: Int -> YieldST s Int ()
 countToST n = do
-  ref <- inST $ newSTRef 0
+  ref <- liftST $ newSTRef 0
   replicateM_ n $ do
-    i <- inST $ do
+    i <- liftST $ do
       modifySTRef ref (+ 1)
       readSTRef ref
     yield i

@@ -1,8 +1,8 @@
 module Control.Monad.Yield.ST
   ( YieldST
-  , inST
+  , liftST
   , runYieldST
-  , module X
+  , yield
   )
 where
 
@@ -13,7 +13,8 @@ import           Control.Monad.ST
 import           Data.Constraint                ( Dict(..) )
 import           System.IO.Unsafe               ( unsafePerformIO )
 
-import           Control.Monad.Yield.Class     as X
+import           Control.Monad.ST.Class         ( MonadST(..) )
+import           Control.Monad.Yield.Class
 import           Data.MemoRef
 
 newtype Yielder s a b = Yielder (MemoRef (Either (a, Yielder s a b) b))
@@ -55,7 +56,7 @@ runYieldST (YieldST act) = unsafePerformIO $ go =<< runReaderT act Dict
     Left  (h, t) -> h : unsafePerformIO (go t)
     Right _      -> []
 
-inST :: ST s b -> YieldST s a b
-inST act = YieldST $ do
-  Dict <- Reader.ask
-  lift $ Yielder <$> newMemoRef (stToIO $ Right <$> act)
+instance MonadST s (YieldST s a) where
+  liftST act = YieldST $ do
+    Dict <- Reader.ask
+    lift $ Yielder <$> newMemoRef (stToIO $ Right <$> act)
