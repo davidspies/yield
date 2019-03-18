@@ -56,7 +56,8 @@ runYieldST (YieldST act) = unsafePerformIO $ go =<< runReaderT act Dict
     Left  (h, t) -> h : unsafePerformIO (go t)
     Right _      -> []
 
-instance MonadST s (YieldST s a) where
+instance MonadST (YieldST s a) where
+  type World (YieldST s a) = s
   liftST act = YieldST $ do
     Dict <- Reader.ask
     lift $ Yielder <$> newMemoRef (stToIO $ Right <$> act)
