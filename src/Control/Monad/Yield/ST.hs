@@ -1,6 +1,6 @@
 module Control.Monad.Yield.ST
   ( YieldST
-  -- , liftST
+  , stToPrim
   , runYieldST
   , yield
   )
@@ -13,7 +13,7 @@ import           Control.Monad.ST
 import           Data.Constraint                ( Dict(..) )
 import           System.IO.Unsafe               ( unsafePerformIO )
 
-import           Control.Monad.Primitive        ( PrimMonad(..) )
+import           Control.Monad.Primitive
 import           Control.Monad.Yield.Class
 import           Data.MemoRef
 

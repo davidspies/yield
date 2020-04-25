@@ -2,7 +2,6 @@ module Control.Monad.Yield.STTest where
 
 import           DSpies.Prelude
 
-import           Control.Monad.Primitive
 import           Data.STRef
 import           Test.Hspec
 
