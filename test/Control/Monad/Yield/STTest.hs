@@ -2,6 +2,7 @@ module Control.Monad.Yield.STTest where
 
 import           DSpies.Prelude
 
+import           Control.Monad.Primitive
 import           Data.STRef
 import           Test.Hspec
 
@@ -18,9 +19,9 @@ spec_yieldst = describe "YieldST" $ do
 
 countToST :: Int -> YieldST s Int ()
 countToST n = do
-  ref <- liftST $ newSTRef 0
+  ref <- stToPrim $ newSTRef 0
   replicateM_ n $ do
-    i <- liftST $ do
+    i <- stToPrim $ do
       modifySTRef ref (+ 1)
       readSTRef ref
     yield i

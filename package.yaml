@@ -25,6 +25,7 @@ dependencies:
 - dspies-prelude
 - constraints
 - mtl
+- primitive
 - stm
 
 ghc-options:

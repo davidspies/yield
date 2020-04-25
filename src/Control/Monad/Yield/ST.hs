@@ -1,6 +1,6 @@
 module Control.Monad.Yield.ST
   ( YieldST
-  , liftST
+  -- , liftST
   , runYieldST
   , yield
   )
@@ -13,7 +13,7 @@ import           Control.Monad.ST
 import           Data.Constraint                ( Dict(..) )
 import           System.IO.Unsafe               ( unsafePerformIO )
 
-import           Control.Monad.ST.Class         ( MonadST(..) )
+import           Control.Monad.Primitive        ( PrimMonad(..) )
 import           Control.Monad.Yield.Class
 import           Data.MemoRef
 
@@ -56,8 +56,8 @@ runYieldST (YieldST act) = unsafePerformIO $ go =<< runReaderT act Dict
     Left  (h, t) -> h : unsafePerformIO (go t)
     Right _      -> []
 
-instance MonadST (YieldST s a) where
-  type World (YieldST s a) = s
-  liftST act = YieldST $ do
+instance PrimMonad (YieldST s a) where
+  type PrimState (YieldST s a) = s
+  primitive act = YieldST $ do
     Dict <- Reader.ask
-    lift $ Yielder <$> newMemoRef (stToIO $ Right <$> act)
+    lift $ Yielder <$> newMemoRef (Right <$> primitive act)
