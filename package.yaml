@@ -1,90 +1,91 @@
-name:                yield
-version:             0.1.0.0
-github:              "davidspies/yield"
-license:             BSD3
-author:              "David Spies"
-maintainer:          "dnspies@gmail.com"
-copyright:           "2019 David Spies"
+name: yield
+version: 0.1.0.0
+github: "davidspies/yield"
+license: BSD3
+author: "David Spies"
+maintainer: "dnspies@gmail.com"
+copyright: "2019 David Spies"
 
 extra-source-files:
-- README.md
-- ChangeLog.md
+  - README.md
+  - ChangeLog.md
 
 # Metadata used when publishing your package
 # synopsis:            Short description of your package
 # category: Web
 
-
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/davidspies/yield#readme>
+description: Please see the README on GitHub at <https://github.com/davidspies/yield#readme>
 
 dependencies:
-- base >= 4.7 && < 5
-- constraints
-- mtl
-- primitive
-- stm
-- transformed
+  - base >= 4.7 && < 5
+  - constraints
+  - mtl
+  - primitive
+  - stm
+  - transformed
 
 ghc-options:
-- -Werror
-- -Wall
+  - -Werror
+  - -Weverything
+  - -Wno-missing-import-lists
+  - -Wno-safe
 
 default-extensions:
-- BangPatterns
-- ConstraintKinds
-- DataKinds
-- DeriveFoldable
-- DeriveFunctor
-- DeriveGeneric
-- DeriveLift
-- DeriveTraversable
-- DerivingStrategies
-- DerivingVia
-- EmptyCase
-- ExistentialQuantification
-- FlexibleContexts
-- FlexibleInstances
-- FunctionalDependencies
-- GADTs
-- GeneralizedNewtypeDeriving
-- InstanceSigs
-- KindSignatures
-- LambdaCase
-- MultiParamTypeClasses
-- MultiWayIf
-- NamedFieldPuns
-- NoImplicitPrelude
-- OverloadedStrings
-- QuantifiedConstraints
-- RankNTypes
-- RecordWildCards
-- ScopedTypeVariables
-- StandaloneDeriving
-- TupleSections
-- TypeApplications
-- TypeFamilyDependencies
-- TypeFamilies
-- TypeOperators
-- TypeSynonymInstances
-- ViewPatterns
+  - BangPatterns
+  - ConstraintKinds
+  - DataKinds
+  - DeriveFoldable
+  - DeriveFunctor
+  - DeriveGeneric
+  - DeriveLift
+  - DeriveTraversable
+  - DerivingStrategies
+  - DerivingVia
+  - EmptyCase
+  - ExistentialQuantification
+  - FlexibleContexts
+  - FlexibleInstances
+  - FunctionalDependencies
+  - GADTs
+  - InstanceSigs
+  - KindSignatures
+  - LambdaCase
+  - MultiParamTypeClasses
+  - MultiWayIf
+  - NamedFieldPuns
+  - NoImplicitPrelude
+  - OverloadedStrings
+  - QuantifiedConstraints
+  - RankNTypes
+  - RecordWildCards
+  - ScopedTypeVariables
+  - StandaloneDeriving
+  - TupleSections
+  - TypeApplications
+  - TypeFamilyDependencies
+  - TypeFamilies
+  - TypeOperators
+  - TypeSynonymInstances
+  - ViewPatterns
 
 library:
   source-dirs: src
 
 tests:
   yield-test:
-    main:                Tasty.hs
-    source-dirs:         test
+    main: Tasty.hs
+    source-dirs: test
     ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
+      - -Wno-unsafe
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
     dependencies:
-    - yield
-    - hspec
-    - tasty
-    - tasty-discover
-    - tasty-hspec
+      - yield
+      - hspec
+      - tasty
+      - tasty-discover
+      - tasty-hspec

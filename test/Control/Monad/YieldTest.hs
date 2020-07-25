@@ -1,4 +1,4 @@
-module Control.Monad.YieldTest where
+module Control.Monad.YieldTest (spec_yield) where
 
 import Control.Monad
 import Control.Monad.State (runStateT)

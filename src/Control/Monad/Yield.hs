@@ -1,3 +1,5 @@
+{-# LANGUAGE Safe #-}
+
 module Control.Monad.Yield
   ( Yield,
     runYield,
@@ -10,7 +12,7 @@ import Control.Monad.Yield.Class
 import Prelude
 
 data Yield a b = Continue (a, Yield a b) | Final b
-  deriving (Functor)
+  deriving stock (Functor)
 
 instance Applicative (Yield a) where
   pure = Final

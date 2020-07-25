@@ -1,3 +1,6 @@
+{-# LANGUAGE Trustworthy #-}
+{-# OPTIONS_GHC -Wno-unsafe #-}
+
 module Control.Monad.Yield.ST
   ( YieldST,
     stToPrim,

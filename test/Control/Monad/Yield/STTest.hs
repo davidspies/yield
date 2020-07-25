@@ -1,4 +1,4 @@
-module Control.Monad.Yield.STTest where
+module Control.Monad.Yield.STTest (spec_yieldst) where
 
 import Control.Monad
 import Control.Monad.Yield.ST
