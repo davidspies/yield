@@ -1,20 +1,19 @@
 module Control.Monad.Yield.STTest where
 
-import           DSpies.Prelude
-
-import           Data.STRef
-import           Test.Hspec
-
-import           Control.Monad.Yield.ST
+import Control.Monad
+import Control.Monad.Yield.ST
+import Data.STRef
+import Test.Hspec
+import Prelude
 
 spec_yieldst :: Spec
 spec_yieldst = describe "YieldST" $ do
-  it "should reach the end of the list"
-    $          runYieldST (countToST 10)
-    `shouldBe` [1 .. 10]
-  it "should lazily produce values"
-    $          take 10 (runYieldST (countToST 10 >> error "fail"))
-    `shouldBe` [1 .. 10]
+  it "should reach the end of the list" $
+    runYieldST (countToST 10)
+      `shouldBe` [1 .. 10]
+  it "should lazily produce values" $
+    take 10 (runYieldST (countToST 10 >> error "fail"))
+      `shouldBe` [1 .. 10]
 
 countToST :: Int -> YieldST s Int ()
 countToST n = do

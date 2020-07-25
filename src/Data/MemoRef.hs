@@ -1,15 +1,15 @@
 module Data.MemoRef
-  ( MemoRef
-  , newMemoRef
-  , pureMemoRef
-  , readMemoRef
+  ( MemoRef,
+    newMemoRef,
+    pureMemoRef,
+    readMemoRef,
   )
 where
 
-import           DSpies.Prelude
-
-import           Control.Concurrent.STM
-import           Control.Monad.Fix              ( mfix )
+import Control.Concurrent.STM
+import Control.Monad
+import Prelude
+import Control.Monad.Fix (mfix)
 
 -- |
 -- A box which holds an IO action and lazily evaluates it only if and when the
@@ -29,7 +29,7 @@ pureMemoRef = fmap MemoRef . newTVarIO . return
 newMemoRef :: IO a -> IO (MemoRef a)
 newMemoRef act = fmap MemoRef $ do
   begunEvaluation <- newTVarIO False
-  resultBox       <- newEmptyTMVarIO
+  resultBox <- newEmptyTMVarIO
   mfix $ \r -> newTVarIO $ do
     hasBegun <- atomically $ do
       hasBegun <- readTVar begunEvaluation

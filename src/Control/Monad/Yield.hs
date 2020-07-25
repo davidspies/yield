@@ -1,23 +1,23 @@
 module Control.Monad.Yield
-  ( Yield
-  , runYield
-  , yield
+  ( Yield,
+    runYield,
+    yield,
   )
 where
 
-import           DSpies.Prelude
-
-import           Control.Monad.Yield.Class
+import Control.Monad
+import Control.Monad.Yield.Class
+import Prelude
 
 data Yield a b = Continue (a, Yield a b) | Final b
   deriving (Functor)
 
 instance Applicative (Yield a) where
-  pure  = Final
+  pure = Final
   (<*>) = ap
 
 instance Monad (Yield a) where
-  (>>=) (Final    x     ) fn = fn x
+  (>>=) (Final x) fn = fn x
   (>>=) (Continue (x, y)) fn = Continue (x, y >>= fn)
 
 instance MonadYield a (Yield a) where
@@ -26,4 +26,4 @@ instance MonadYield a (Yield a) where
 runYield :: Yield a b -> [a]
 runYield = \case
   Continue (x, y) -> x : runYield y
-  Final    _      -> []
+  Final _ -> []

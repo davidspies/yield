@@ -22,11 +22,11 @@ description:         Please see the README on GitHub at <https://github.com/davi
 
 dependencies:
 - base >= 4.7 && < 5
-- dspies-prelude
 - constraints
 - mtl
 - primitive
 - stm
+- transformed
 
 ghc-options:
 - -Werror
