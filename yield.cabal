@@ -1,0 +1,72 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: ef6b21f3815cfa285bdd1d0f801636c12c15a4eb4c7cf2429183e3e917c67a3c
+
+name:           yield
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/davidspies/yield#readme>
+homepage:       https://github.com/davidspies/yield#readme
+bug-reports:    https://github.com/davidspies/yield/issues
+author:         David Spies
+maintainer:     dnspies@gmail.com
+copyright:      2019 David Spies
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/davidspies/yield
+
+library
+  exposed-modules:
+      Control.Monad.Yield
+      Control.Monad.Yield.Class
+      Control.Monad.Yield.ST
+      Data.MemoRef
+  other-modules:
+      Paths_yield
+  hs-source-dirs:
+      src
+  default-extensions: BangPatterns ConstraintKinds DataKinds DeriveFoldable DeriveFunctor DeriveGeneric DeriveLift DeriveTraversable DerivingStrategies DerivingVia EmptyCase ExistentialQuantification FlexibleContexts FlexibleInstances FunctionalDependencies GADTs InstanceSigs KindSignatures LambdaCase MultiParamTypeClasses MultiWayIf NamedFieldPuns NoImplicitPrelude OverloadedStrings QuantifiedConstraints RankNTypes RecordWildCards ScopedTypeVariables StandaloneDeriving TupleSections TypeApplications TypeFamilyDependencies TypeFamilies TypeOperators TypeSynonymInstances ViewPatterns
+  ghc-options: -Werror -Weverything -Wno-missing-import-lists -Wno-safe
+  build-depends:
+      base >=4.7 && <5
+    , constraints
+    , mtl
+    , primitive
+    , stm
+    , transformed
+  default-language: Haskell2010
+
+test-suite yield-test
+  type: exitcode-stdio-1.0
+  main-is: Tasty.hs
+  other-modules:
+      Control.Monad.Yield.STTest
+      Control.Monad.YieldTest
+      Paths_yield
+  hs-source-dirs:
+      test
+  default-extensions: BangPatterns ConstraintKinds DataKinds DeriveFoldable DeriveFunctor DeriveGeneric DeriveLift DeriveTraversable DerivingStrategies DerivingVia EmptyCase ExistentialQuantification FlexibleContexts FlexibleInstances FunctionalDependencies GADTs InstanceSigs KindSignatures LambdaCase MultiParamTypeClasses MultiWayIf NamedFieldPuns NoImplicitPrelude OverloadedStrings QuantifiedConstraints RankNTypes RecordWildCards ScopedTypeVariables StandaloneDeriving TupleSections TypeApplications TypeFamilyDependencies TypeFamilies TypeOperators TypeSynonymInstances ViewPatterns
+  ghc-options: -Werror -Weverything -Wno-missing-import-lists -Wno-safe -Wno-unsafe -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , constraints
+    , hspec
+    , mtl
+    , primitive
+    , stm
+    , tasty
+    , tasty-discover
+    , tasty-hspec
+    , transformed
+    , yield
+  default-language: Haskell2010
